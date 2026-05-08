@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hollow Break | Ficha de Agente</title>
+  <style>
+    :root {
+      --bg: #090913;
+      --panel: #141425;
+      --panel-2: #1d1d33;
+      --text: #f5f7ff;
+      --muted: #a8adc9;
+      --accent: #8b5cf6;
+      --accent-2: #00e5ff;
+      --danger: #ff4d6d;
+      --ok: #36f1a6;
+      --border: #30304d;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(139, 92, 246, .25), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(0, 229, 255, .18), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 32px 18px 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    header p {
+      margin: 8px auto 0;
+      color: var(--muted);
+      max-width: 720px;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 24px));
+      margin: 0 auto 40px;
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 850px) {
+      main { grid-template-columns: 1fr; }
+    }
+
+    section, .card {
+      background: rgba(20, 20, 37, .88);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.28);
+      backdrop-filter: blur(10px);
+    }
+
+    h2, h3 {
+      margin-top: 0;
+      letter-spacing: .5px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 650px) {
+      .grid, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: .9rem;
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 12px;
+      background: var(--panel-2);
+      color: var(--text);
+      outline: none;
+    }
+
+    textarea { min-height: 90px; resize: vertical; }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px rgba(0,229,255,.12);
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #070711;
+      transition: transform .15s ease, filter .15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(1.08); }
+
+    .btn-danger { background: linear-gradient(135deg, var(--danger), #ffb703); }
+    .btn-dark { background: #252541; color: var(--text); border: 1px solid var(--border); }
+
+    .attributes {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 760px) {
+      .attributes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .attribute-box {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .attribute-box input {
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 900;
+      margin-top: 6px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .stat {
+      background: linear-gradient(180deg, rgba(139,92,246,.18), rgba(0,229,255,.08));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.8rem;
+      margin-top: 4px;
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+    }
+
+    .chip {
+      background: #252541;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .sheet-preview {
+      white-space: pre-wrap;
+      background: #0d0d19;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      color: #e8eaff;
+      min-height: 240px;
+      max-height: 520px;
+      overflow: auto;
+    }
+
+    .row { margin-bottom: 14px; }
+
+    .small {
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    .warning {
+      color: #ffd166;
+      font-weight: 700;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Hollow Break</h1>
+    <p>Gerador de fichas para RPG urbano futurista inspirado em ação, combos, Hollows e agentes estilosos.</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Ficha do Agente</h2>
+
+      <div class="grid">
+        <div class="row">
+          <label for="nome">Nome do personagem</label>
+          <input id="nome" placeholder="Ex: Kael Vortex" />
+        </div>
+
+        <div class="row">
+          <label for="jogador">Jogador</label>
+          <input id="jogador" placeholder="Seu nome" />
+        </div>
+
+        <div class="row">
+          <label for="classe">Classe</label>
+          <select id="classe">
+            <option>Executor</option>
+            <option>Anômalo</option>
+            <option>Guardião</option>
+            <option>Especialista</option>
+            <option>Atirador</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <label for="afinidade">Afinidade de Éter</label>
+          <select id="afinidade">
+            <option>Fogo</option>
+            <option>Gelo</option>
+            <option>Elétrico</option>
+            <option>Físico</option>
+            <option>Caos</option>
+            <option>Vácuo</option>
+          </select>
+        </div>
+      </div>
+
+      <h3>Atributos</h3>
+      <p class="small">Distribua 10 pontos. Máximo inicial recomendado: 4.</p>
+      <div class="attributes">
+        <div class="attribute-box"><label>Corpo</label><input type="number" min="0" max="5" id="corpo" value="0" /></div>
+        <div class="attribute-box"><label>Reflexo</label><input type="number" min="0" max="5" id="reflexo" value="0" /></div>
+        <div class="attribute-box"><label>Técnica</label><input type="number" min="0" max="5" id="tecnica" value="0" /></div>
+        <div class="attribute-box"><label>Presença</label><input type="number" min="0" max="5" id="presenca" value="0" /></div>
+        <div class="attribute-box"><label>Éter</label><input type="number" min="0" max="5" id="eter" value="0" /></div>
+      </div>
+      <p id="pontosAviso" class="small"></p>
+
+      <div class="grid-3">
+        <div class="row">
+          <label for="esp1">Especialização 1</label>
+          <input id="esp1" placeholder="Ex: Katana" />
+        </div>
+        <div class="row">
+          <label for="esp2">Especialização 2</label>
+          <input id="esp2" placeholder="Ex: Acrobacia" />
+        </div>
+        <div class="row">
+          <label for="esp3">Especialização 3</label>
+          <input id="esp3" placeholder="Ex: Hacking" />
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="row">
+          <label for="arma">Arma</label>
+          <select id="arma">
+            <option>Espadas</option>
+            <option>Martelos</option>
+            <option>Pistolas</option>
+            <option>Rifles</option>
+            <option>Foices</option>
+            <option>Manoplas</option>
+          </select>
+        </div>
+        <div class="row">
+          <label for="danoArma">Dano da arma</label>
+          <select id="danoArma">
+            <option>Leve - 1d6</option>
+            <option>Média - 2d6</option>
+            <option>Pesada - 3d6</option>
+            <option>Éter - 2d6 + efeito</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="habilidade">Habilidade especial</label>
+        <textarea id="habilidade" placeholder="Nome, custo em PE, dano e efeito cinematográfico."></textarea>
+      </div>
+
+      <div class="row">
+        <label for="supremo">Supremo</label>
+        <textarea id="supremo" placeholder="Custa 5 PE. Descreva dano massivo, área e impacto visual."></textarea>
+      </div>
+
+      <div class="row">
+        <label for="historia">História / estilo do agente</label>
+        <textarea id="historia" placeholder="Visual, personalidade, facção, motivo para entrar nas Hollows..."></textarea>
+      </div>
+
+      <div class="grid-3">
+        <button onclick="salvarFicha()">Salvar no navegador</button>
+        <button class="btn-dark" onclick="exportarJSON()">Exportar JSON</button>
+        <button class="btn-danger" onclick="limparFicha()">Limpar ficha</button>
+      </div>
+
+      <div class="row" style="margin-top: 14px;">
+        <label for="importFile">Importar ficha JSON</label>
+        <input type="file" id="importFile" accept="application/json" />
+      </div>
+    </section>
+
+    <aside>
+      <div class="card">
+        <h2>Status Calculado</h2>
+        <div class="stats">
+          <div class="stat">Vida<strong id="vida">10</strong></div>
+          <div class="stat">Defesa<strong id="defesa">5</strong></div>
+          <div class="stat">PE Máx.<strong>5</strong></div>
+          <div class="stat">Pontos<strong id="pontos">0/10</strong></div>
+        </div>
+
+        <h3>Bônus da Classe</h3>
+        <div id="bonusClasse" class="chips"></div>
+
+        <h3>Efeito da Afinidade</h3>
+        <div id="efeitoAfinidade" class="chips"></div>
+      </div>
+
+      <div class="card" style="margin-top: 18px;">
+        <h2>Resumo da Ficha</h2>
+        <div id="preview" class="sheet-preview"></div>
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    Hollow Break • Ficha digital feita para GitHub Pages
+  </footer>
+
+  <script>
+    const ids = [
+      "nome", "jogador", "classe", "afinidade", "corpo", "reflexo", "tecnica", "presenca", "eter",
+      "esp1", "esp2", "esp3", "arma", "danoArma", "habilidade", "supremo", "historia"
+    ];
+
+    const bonusPorClasse = {
+      "Executor": ["+2 dano corpo a corpo", "Pode atacar 2 vezes gastando 1 PE"],
+      "Anômalo": ["Poderes elementais", "Dano em área", "Controle de multidão"],
+      "Guardião": ["Protege aliados", "Reduz dano", "Contra-ataques"],
+      "Especialista": ["Hackeia sistemas", "Cura aliados", "Invoca dispositivos"],
+      "Atirador": ["Ataques longos", "Críticos frequentes", "Mobilidade elevada"]
+    };
+
+    const efeitoPorAfinidade = {
+      "Fogo": ["Queimadura contínua"],
+      "Gelo": ["Lentidão", "Congelamento"],
+      "Elétrico": ["Paralisação"],
+      "Físico": ["Impacto bruto"],
+      "Caos": ["Corrupção dimensional"],
+      "Vácuo": ["Gravidade", "Sucção"]
+    };
+
+    function valor(id) {
+      const el = document.getElementById(id);
+      return el.type === "number" ? Number(el.value || 0) : el.value;
+    }
+
+    function fichaAtual() {
+      const ficha = {};
+      ids.forEach(id => ficha[id] = valor(id));
+      return ficha;
+    }
+
+    function aplicarFicha(ficha) {
+      ids.forEach(id => {
+        if (ficha[id] !== undefined) document.getElementById(id).value = ficha[id];
+      });
+      atualizarTudo();
+    }
+
+    function criarChips(containerId, lista) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      lista.forEach(item => {
+        const span = document.createElement("span");
+        span.className = "chip";
+        span.textContent = item;
+        container.appendChild(span);
+      });
+    }
+
+    function atualizarTudo() {
+      const corpo = valor("corpo");
+      const reflexo = valor("reflexo");
+      const tecnica = valor("tecnica");
+      const presenca = valor("presenca");
+      const eter = valor("eter");
+      const total = corpo + reflexo + tecnica + presenca + eter;
+
+      document.getElementById("vida").textContent = 10 + corpo * 2;
+      document.getElementById("defesa").textContent = 5 + reflexo;
+      document.getElementById("pontos").textContent = `${total}/10`;
+
+      const aviso = document.getElementById("pontosAviso");
+      if (total > 10) {
+        aviso.innerHTML = `<span class="warning">Você passou do limite inicial de 10 pontos.</span>`;
+      } else if ([corpo, reflexo, tecnica, presenca, eter].some(v => v > 4)) {
+        aviso.innerHTML = `<span class="warning">Máximo inicial recomendado é 4 em um atributo.</span>`;
+      } else {
+        aviso.textContent = `Pontos restantes: ${10 - total}`;
+      }
+
+      criarChips("bonusClasse", bonusPorClasse[valor("classe")] || []);
+      criarChips("efeitoAfinidade", efeitoPorAfinidade[valor("afinidade")] || []);
+      atualizarPreview();
+    }
+
+    function atualizarPreview() {
+      const f = fichaAtual();
+      const vida = 10 + Number(f.corpo) * 2;
+      const defesa = 5 + Number(f.reflexo);
+
+      document.getElementById("preview").textContent =
+`# ${f.nome || "Agente sem nome"}
+Jogador: ${f.jogador || "-"}
+Classe: ${f.classe}
+Afinidade: ${f.afinidade}
+
+## Status
+Vida: ${vida}
+Defesa: ${defesa}
+PE Máximo: 5
+
+## Atributos
+Corpo: ${f.corpo}
+Reflexo: ${f.reflexo}
+Técnica: ${f.tecnica}
+Presença: ${f.presenca}
+Éter: ${f.eter}
+
+## Especializações
+1. ${f.esp1 || "-"} (+2)
+2. ${f.esp2 || "-"} (+2)
+3. ${f.esp3 || "-"} (+2)
+
+## Equipamento
+Arma: ${f.arma}
+Dano: ${f.danoArma}
+
+## Habilidade Especial
+${f.habilidade || "-"}
+
+## Supremo
+${f.supremo || "-"}
+
+## História / Estilo
+${f.historia || "-"}`;
+    }
+
+    function salvarFicha() {
+      localStorage.setItem("hollowBreakFicha", JSON.stringify(fichaAtual()));
+      alert("Ficha salva no navegador!");
+    }
+
+    function carregarFicha() {
+      const salva = localStorage.getItem("hollowBreakFicha");
+      if (salva) aplicarFicha(JSON.parse(salva));
+    }
+
+    function limparFicha() {
+      if (!confirm("Tem certeza que deseja limpar a ficha?")) return;
+      localStorage.removeItem("hollowBreakFicha");
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el.type === "number") el.value = 0;
+        else if (el.tagName === "SELECT") el.selectedIndex = 0;
+        else el.value = "";
+      });
+      atualizarTudo();
+    }
+
+    function exportarJSON() {
+      const blob = new Blob([JSON.stringify(fichaAtual(), null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${valor("nome") || "ficha-hollow-break"}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("importFile").addEventListener("change", event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          aplicarFicha(JSON.parse(reader.result));
+        } catch (e) {
+          alert("Arquivo JSON inválido.");
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    ids.forEach(id => document.getElementById(id).addEventListener("input", atualizarTudo));
+    carregarFicha();
+    atualizarTudo();
+  </script>
+</body>
+</html>
