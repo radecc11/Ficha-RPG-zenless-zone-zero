@@ -339,6 +339,7 @@
         <button onclick="salvarFicha()">Salvar no navegador</button>
         <button class="btn-dark" onclick="exportarJSON()">Exportar JSON</button>
         <button class="btn-danger" onclick="limparFicha()">Limpar ficha</button>
+        <button onclick="exportarImagem()">Exportar imagem PNG</button>
       </div>
 
       <div class="row" style="margin-top: 14px;">
@@ -525,6 +526,148 @@ ${f.historia || "-"}`;
       a.download = `${valor("nome") || "ficha-hollow-break"}.json`;
       a.click();
       URL.revokeObjectURL(url);
+    }
+
+    function exportarImagem() {
+      const f = fichaAtual();
+      const vida = 10 + Number(f.corpo) * 2;
+      const defesa = 5 + Number(f.reflexo);
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = 1080;
+      canvas.height = 1350;
+
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, "#090913");
+      gradient.addColorStop(0.45, "#17172b");
+      gradient.addColorStop(1, "#041f2b");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "rgba(139, 92, 246, 0.25)";
+      ctx.beginPath();
+      ctx.arc(140, 120, 220, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(0, 229, 255, 0.18)";
+      ctx.beginPath();
+      ctx.arc(980, 1210, 260, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = "#00e5ff";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(45, 45, 990, 1260);
+
+      ctx.fillStyle = "#f5f7ff";
+      ctx.font = "bold 58px Arial";
+      ctx.fillText(f.nome || "Agente sem nome", 80, 130);
+
+      ctx.fillStyle = "#a8adc9";
+      ctx.font = "28px Arial";
+      ctx.fillText(`Jogador: ${f.jogador || "-"}`, 80, 180);
+      ctx.fillText(`Classe: ${f.classe}  •  Afinidade: ${f.afinidade}`, 80, 225);
+
+      function card(x, y, w, h, titulo, texto, cor = "#ffffff") {
+        ctx.fillStyle = "rgba(20, 20, 37, 0.92)";
+        ctx.strokeStyle = "#30304d";
+        ctx.lineWidth = 2;
+        roundRect(ctx, x, y, w, h, 24, true, true);
+        ctx.fillStyle = "#a8adc9";
+        ctx.font = "24px Arial";
+        ctx.fillText(titulo, x + 24, y + 38);
+        ctx.fillStyle = cor;
+        ctx.font = "bold 44px Arial";
+        ctx.fillText(String(texto), x + 24, y + 92);
+      }
+
+      card(80, 280, 210, 125, "VIDA", vida, "#36f1a6");
+      card(315, 280, 210, 125, "DEFESA", defesa, "#00e5ff");
+      card(550, 280, 210, 125, "PE MÁX.", 5, "#ffd166");
+      card(785, 280, 210, 125, "ARMA", f.arma, "#f5f7ff");
+
+      ctx.fillStyle = "#f5f7ff";
+      ctx.font = "bold 34px Arial";
+      ctx.fillText("ATRIBUTOS", 80, 480);
+
+      const attrs = [
+        ["Corpo", f.corpo], ["Reflexo", f.reflexo], ["Técnica", f.tecnica],
+        ["Presença", f.presenca], ["Éter", f.eter]
+      ];
+      attrs.forEach((a, i) => {
+        card(80 + i * 192, 505, 170, 120, a[0].toUpperCase(), a[1], "#8b5cf6");
+      });
+
+      function textoBloco(titulo, linhas, x, y, largura) {
+        ctx.fillStyle = "#f5f7ff";
+        ctx.font = "bold 32px Arial";
+        ctx.fillText(titulo, x, y);
+        ctx.fillStyle = "#dfe3ff";
+        ctx.font = "25px Arial";
+        let atualY = y + 42;
+        linhas.forEach(linha => {
+          const partes = quebrarTexto(ctx, linha || "-", largura);
+          partes.forEach(p => {
+            ctx.fillText(p, x, atualY);
+            atualY += 32;
+          });
+          atualY += 8;
+        });
+        return atualY;
+      }
+
+      let y = 700;
+      y = textoBloco("ESPECIALIZAÇÕES", [
+        `1. ${f.esp1 || "-"} (+2)`,
+        `2. ${f.esp2 || "-"} (+2)`,
+        `3. ${f.esp3 || "-"} (+2)`
+      ], 80, y, 900);
+
+      y = textoBloco("HABILIDADE ESPECIAL", [f.habilidade], 80, y + 20, 900);
+      y = textoBloco("SUPREMO", [f.supremo], 80, y + 20, 900);
+      textoBloco("HISTÓRIA / ESTILO", [f.historia], 80, y + 20, 900);
+
+      ctx.fillStyle = "#a8adc9";
+      ctx.font = "22px Arial";
+      ctx.fillText("Hollow Break • Ficha de Agente", 80, 1260);
+
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = `${f.nome || "ficha-hollow-break"}.png`;
+      a.click();
+    }
+
+    function quebrarTexto(ctx, texto, larguraMaxima) {
+      const palavras = String(texto).split(" ");
+      const linhas = [];
+      let linha = "";
+      palavras.forEach(palavra => {
+        const teste = linha ? linha + " " + palavra : palavra;
+        if (ctx.measureText(teste).width > larguraMaxima && linha) {
+          linhas.push(linha);
+          linha = palavra;
+        } else {
+          linha = teste;
+        }
+      });
+      linhas.push(linha);
+      return linhas;
+    }
+
+    function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
     }
 
     document.getElementById("importFile").addEventListener("change", event => {
